@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cast Your Vote - E-Voting System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .voting-form {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .error-message {
+            color: #ff3333;
+            font-size: 14px;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .party-options {
+            margin: 20px 0;
+        }
+
+        .party-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .party-option:hover {
+            background-color: #f8f9fa;
+        }
+
+        .party-option input[type="radio"] {
+            width: auto;
+            margin-right: 15px;
+        }
+
+        .party-logo {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            object-fit: contain;
+        }
+
+        .party-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .submit-vote-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-vote-btn:hover {
+            background-color: #45a049;
+        }
+
+        .submit-vote-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            text-align: center;
+            color: #4CAF50;
+            font-size: 18px;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="logo.svg" alt="E-Voting Logo">
+            <span>E-Voting System</span>
+        </div>
+        <div class="nav-links">
+            <a href="dashboard-home.html" class="nav-link">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="#features" class="nav-link">
+                <i class="fas fa-star"></i> Features
+            </a>
+            <!-- <a href="" id="generateVoterId" class="voter-id-btn">
+                <i class="fas fa-id-card"></i> Generate E-Voter ID
+            </a> -->
+            <button id="logoutBtn" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <main>
+        <div class="voting-form">
+            <h2>Cast Your Vote</h2>
+            <form id="votingForm">
+                <div class="form-group">
+                    <label for="voterId">E-Voter ID</label>
+                    <input type="text" id="voterId" name="voterId" required>
+                    <span class="error-message" id="voterIdError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                    <span class="error-message" id="passwordError"></span>
+                </div>
+                <div class="party-options">
+                    <h3>Select Your Party</h3>
+                    <div class="party-option">
+                        <input type="radio" id="bjp" name="party" value="BJP" required>
+                        
+                        <span class="party-name">Bharatiya Janata Party (BJP)</span>
+                    </div>
+                    <div class="party-option">
+                        <input type="radio" id="congress" name="party" value="CONGRESS">
+                       
+                        <span class="party-name">Indian National Congress (INC)</span>
+                    </div>
+                    <div class="party-option">
+                        <input type="radio" id="aap" name="party" value="AAP">
+                        
+                        <span class="party-name">Aam Aadmi Party (AAP)</span>
+                    </div>
+                </div>
+                <button type="submit" id="submitVote" class="submit-vote-btn" disabled>
+                    <i class="fas fa-vote-yea"></i> Submit Vote
+                </button>
+            </form>
+            <div id="successMessage" class="success-message">
+                <i class="fas fa-check-circle"></i> Your vote has been successfully cast!
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const votingForm = document.getElementById('votingForm');
+            const submitVoteBtn = document.getElementById('submitVote');
+            const successMessage = document.getElementById('successMessage');
+
+            // Enable submit button when a party is selected
+            const partyOptions = document.querySelectorAll('input[name="party"]');
+            partyOptions.forEach(option => {
+                option.addEventListener('change', function() {
+                    submitVoteBtn.disabled = false;
+                });
+            });
+
+            // Form submission
+            votingForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const voterId = document.getElementById('voterId').value;
+                const password = document.getElementById('password').value;
+                const selectedParty = document.querySelector('input[name="party"]:checked').value;
+
+                // Verify voter ID and password
+                const storedVoterId = localStorage.getItem('voterId');
+                const userData = JSON.parse(localStorage.getItem('userData'));
+
+                if (voterId !== storedVoterId) {
+                    document.getElementById('voterIdError').textContent = 'Invalid E-Voter ID';
+                    return;
+                }
+
+                if (password !== userData.password) {
+                    document.getElementById('passwordError').textContent = 'Invalid password';
+                    return;
+                }
+
+                // Store vote data
+                const voteData = {
+                    voterId: voterId,
+                    party: selectedParty,
+                    timestamp: new Date().toISOString()
+                };
+                localStorage.setItem('voteData', JSON.stringify(voteData));
+
+                // Show success message
+                votingForm.style.display = 'none';
+                successMessage.style.display = 'block';
+
+                // Redirect to dashboard after 3 seconds
+                setTimeout(() => {
+                    window.location.href = 'dashboard-home.html';
+                }, 3000);
+            });
+
+            // Mobile menu toggle
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            
+            hamburger.addEventListener('click', function() {
+                navLinks.classList.toggle('active');
+                hamburger.classList.toggle('active');
+            });
+
+            // Logout functionality
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                localStorage.removeItem('userData');
+                localStorage.removeItem('voterId');
+                localStorage.removeItem('voteData');
+                window.location.href = 'signin.html';
+            });
+        });
+    </script>
+</body>
+</html>

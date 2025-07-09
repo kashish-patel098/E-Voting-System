@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Voting Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="logo.svg" alt="E-Voting Logo">
+            <span>E-Voting System</span>
+        </div>
+        <div class="nav-links">
+            <a href="dashboard-home.html" class="nav-link active">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="#features" class="nav-link">
+                <i class="fas fa-star"></i> Features
+            </a>
+            <button id="generateVoterId" class="voter-id-btn">
+                <i class="fas fa-id-card"></i> Generate E-Voter ID
+            </button>
+            <button id="logoutBtn" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <main>
+        <section id="hero" class="dashboard-hero">
+            <div class="hero-content">
+                <h1>Welcome, <span id="userName">User</span>!</h1>
+                <p>Your secure platform for electronic voting</p>
+                <div class="dashboard-actions">
+                    <a href="castvote.html" class="cta-button">
+                        <i class="fas fa-vote-yea"></i> Cast Your Vote
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="voter-status">
+            <h2>Your Voter Status</h2>
+            <div class="voter-status-card">
+                <div class="voter-info-item">
+                    <i class="fas fa-user"></i>
+                    <div>
+                        <h3>Voter Name</h3>
+                        <p id="voterName">Loading...</p>
+                    </div>
+                </div>
+                <div class="voter-info-item">
+                    <i class="fas fa-id-card"></i>
+                    <div>
+                        <h3>E-Voter ID</h3>
+                        <p id="voterIdStatus">Not Generated</p>
+                    </div>
+                </div>
+                <div class="voter-info-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <h3>Vote Status</h3>
+                        <p id="voteStatus">Not Cast</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features">
+            <h2>Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Secure Voting</h3>
+                    <p>Advanced encryption and security measures to protect your vote</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-user-check"></i>
+                    <h3>Voter Verification</h3>
+                    <p>Multi-factor authentication for secure voter identification</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Real-time Results</h3>
+                    <p>Instant counting and transparent result display</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>Mobile Friendly</h3>
+                    <p>Vote from any device, anywhere, anytime</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="about">
+            <h2>About Our System</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Our e-voting system is designed to revolutionize the voting process by making it more accessible, secure, and efficient. We use cutting-edge technology to ensure that every vote counts and is properly recorded.</p>
+                    <ul class="benefits-list">
+                        <li>Secure blockchain technology</li>
+                        <li>End-to-end encryption</li>
+                        <li>24/7 availability</li>
+                        <li>User-friendly interface</li>
+                    </ul>
+                </div>
+                <div class="about-image">
+                    <img src="voting-illustration.png" alt="Voting Illustration">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="voterIdModal" class="modal" >
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Generate E-Voter ID</h2>
+            <form id="voterIdForm" class="voter-id-form">
+                <div class="form-group">
+                    <label for="fullName">Full Name (as per Aadhar)</label>
+                    <input type="text" id="fullName" name="fullName" required>
+                    <span class="error-message" id="nameError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="aadharNumber">Aadhar Card Number</label>
+                    <input type="text" id="aadharNumber" name="aadharNumber" maxlength="12" required>
+                    <span class="error-message" id="aadharError"></span>
+                </div>
+                <button type="button" id="verifyAadhar" class="verify-btn">
+                    <i class="fas fa-check-circle"></i> Verify Aadhar
+                </button>
+                <div id="otpSection" class="form-group" style="display: none;">
+                    <label for="otp">Enter OTP</label>
+                    <input type="text" id="otp" name="otp" maxlength="6">
+                    <span class="error-message" id="otpError"></span>
+                </div>
+                <button type="submit" id="generateVoterIdBtn" class="generate-btn" disabled>
+                    <i class="fas fa-id-card"></i> Generate E-Voter ID
+                </button>
+            </form>
+            <div id="voterIdDisplay" style="display: none;">
+                <div class="voter-id-card">
+                    <h3>Your E-Voter ID</h3>
+                    <p id="generatedVoterId"></p>
+                </div>
+                <button id="downloadVoterId" class="download-btn">
+                    <i class="fas fa-download"></i> Download Voter ID
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .voter-id-form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .error-message {
+            color: #ff3333;
+            font-size: 14px;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .verify-btn, .generate-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        .verify-btn:disabled, .generate-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .voter-id-card {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .voter-id-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .voter-id-card p {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2196F3;
+        }
+
+        .download-btn {
+            background-color: #2196F3;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+    </style>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p>Email: info@evoting.com</p>
+                <p>Phone: (555) 123-4567</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="dashboard-home.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="castvote.html">Cast Vote</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 E-Voting System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            
+            if (!userData) {
+                // If no user data, redirect to login page
+                window.location.href = 'signin.html';
+                return;
+            }
+
+            // Display user information
+            document.getElementById('userName').textContent = userData.name || 'User';
+            document.getElementById('voterName').textContent = userData.name || 'User';
+
+            // Check if user has voter ID
+            const voterId = localStorage.getItem('voterId');
+            if (voterId) {
+                document.getElementById('voterIdStatus').textContent = voterId;
+            }
+
+            // Check if user has cast vote
+            const voteData = JSON.parse(localStorage.getItem('voteData'));
+            if (voteData) {
+                document.getElementById('voteStatus').textContent = 'Vote Cast';
+            }
+
+            // Generate E-Voter ID functionality
+            const generateVoterIdBtn = document.getElementById('generateVoterId');
+            const voterIdModal = document.getElementById('voterIdModal');
+            const closeBtn = document.querySelector('.close');
+            const downloadVoterIdBtn = document.getElementById('downloadVoterId');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            // Show modal with voter ID
+            function showVoterIdModal() {
+                voterIdModal.style.display = 'block';
+                // Reset form and display
+                voterIdForm.style.display = 'block';
+                voterIdDisplay.style.display = 'none';
+                voterIdForm.reset();
+                document.getElementById('otpSection').style.display = 'none';
+                document.getElementById('generateVoterIdBtn').disabled = true;
+            }
+
+            // Generate E-Voter ID
+            function generateVoterId() {
+                const prefix = 'EV';
+                const timestamp = Date.now().toString().slice(-6);
+                const random = Math.random().toString(36).substring(2, 5).toUpperCase();
+                return `${prefix}${timestamp}${random}`;
+            }
+
+            // Event listeners for generate voter ID button
+            generateVoterIdBtn.addEventListener('click', showVoterIdModal);
+
+            // Close modal
+            closeBtn.addEventListener('click', function() {
+                voterIdModal.style.display = 'none';
+            });
+
+            // Download Voter ID
+            downloadVoterIdBtn.addEventListener('click', function() {
+                const voterId = document.getElementById('voterIdDisplay').textContent;
+                const blob = new Blob([voterId], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'e-voter-id.txt';
+                a.click();
+                window.URL.revokeObjectURL(url);
+            });
+
+            // Logout functionality
+            logoutBtn.addEventListener('click', function() {
+                localStorage.removeItem('userData');
+                localStorage.removeItem('voterId');
+                localStorage.removeItem('voteData');
+                window.location.href = 'signin.html';
+            });
+
+            // Mobile menu toggle
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            
+            hamburger.addEventListener('click', function() {
+                navLinks.classList.toggle('active');
+                hamburger.classList.toggle('active');
+            });
+
+            // Form validation and submission
+            const voterIdForm = document.getElementById('voterIdForm');
+            const aadharInput = document.getElementById('aadharNumber');
+            const verifyAadharBtn = document.getElementById('verifyAadhar');
+            const otpSection = document.getElementById('otpSection');
+            const generateVoterIdFormBtn = document.getElementById('generateVoterIdBtn');
+            const voterIdDisplay = document.getElementById('voterIdDisplay');
+
+            // Validate Aadhar number
+            function validateAadhar(aadhar) {
+                return /^\d{12}$/.test(aadhar);
+            }
+
+            // Validate name
+            function validateName(name) {
+                return /^[a-zA-Z\s]{3,50}$/.test(name);
+            }
+
+            // Validate OTP
+            function validateOTP(otp) {
+                return /^\d{6}$/.test(otp);
+            }
+
+            // Aadhar input validation
+            aadharInput.addEventListener('input', function() {
+                const aadharError = document.getElementById('aadharError');
+                if (!validateAadhar(this.value)) {
+                    aadharError.textContent = 'Please enter a valid 12-digit Aadhar number';
+                    verifyAadharBtn.disabled = true;
+                } else {
+                    aadharError.textContent = '';
+                    verifyAadharBtn.disabled = false;
+                }
+            });
+
+            // Name input validation
+            document.getElementById('fullName').addEventListener('input', function() {
+                const nameError = document.getElementById('nameError');
+                if (!validateName(this.value)) {
+                    nameError.textContent = 'Please enter a valid name (3-50 characters, letters only)';
+                    generateVoterIdFormBtn.disabled = true;
+                } else {
+                    nameError.textContent = '';
+                    if (validateAadhar(aadharInput.value) && validateOTP(document.getElementById('otp').value)) {
+                        generateVoterIdFormBtn.disabled = false;
+                    }
+                }
+            });
+
+            // Verify Aadhar button click
+            verifyAadharBtn.addEventListener('click', function() {
+                // Simulate OTP sending
+                otpSection.style.display = 'block';
+                alert('OTP has been sent to your registered mobile number');
+            });
+
+            // OTP input validation
+            document.getElementById('otp').addEventListener('input', function() {
+                const otpError = document.getElementById('otpError');
+                if (!validateOTP(this.value)) {
+                    otpError.textContent = 'Please enter a valid 6-digit OTP';
+                    generateVoterIdFormBtn.disabled = true;
+                } else {
+                    otpError.textContent = '';
+                    if (validateName(document.getElementById('fullName').value) && validateAadhar(aadharInput.value)) {
+                        generateVoterIdFormBtn.disabled = false;
+                    }
+                }
+            });
+
+            // Form submission
+            voterIdForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('fullName').value;
+                const aadhar = document.getElementById('aadharNumber').value;
+                const otp = document.getElementById('otp').value;
+
+                if (!validateName(name) || !validateAadhar(aadhar) || !validateOTP(otp)) {
+                    return;
+                }
+
+                // Generate voter ID
+                const voterId = generateVoterId();
+                localStorage.setItem('voterId', voterId);
+                document.getElementById('voterIdStatus').textContent = voterId;
+                document.getElementById('generatedVoterId').textContent = voterId;
+                
+                // Hide form and show voter ID
+                voterIdForm.style.display = 'none';
+                voterIdDisplay.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html> 
